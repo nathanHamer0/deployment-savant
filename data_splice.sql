@@ -1,0 +1,1 @@
+SELECT plate_x, plate_z FROM 'statcast_2026_to_dl.csv' GROUP BY player_name GROUP BY pitch_type;
