@@ -48,12 +48,12 @@ def get_arsenal(pitches):
         pitches (DataFrame): player's pitch data.
 
     Returns:
-        list[str]: player's pitch types.
+        dict[str]: player's pitch type frequencies.
     """
-    arsenal = []
+    arsenal = {}
     for pt in pitches['pitch_type']:
         if pt not in arsenal:
-            arsenal.append(pt)
+            arsenal[pt] = pitches[pitches['pitch_type'] == pt].iloc[0]['pitch_type_freq']
     return arsenal
     
 def get_stuff(pitches):
@@ -231,7 +231,7 @@ def get_all_player_names():
     return player_names
     
 def main():
-    """Returns a dictionary of player pitcher-profiles
+    """Returns a dictionary of player pitcher-profiles.
 
     Returns:
         dict[dict]: dictionary of player pitcher-profiles.

@@ -234,7 +234,7 @@ def test_get_arsenal_valid():
     
     # Call and verify
     res = profiler.get_arsenal(INPUT_DF)
-    assert res == ["SL", "FS", "FF"]
+    assert res == pytest.approx({'SL': 0.103, 'FS': 0.380, 'FF': 0.516}, abs=0.001)
     
 def test_get_stuff_valid(mocker):
     """Test stuff extractor with valid input."""
@@ -242,7 +242,7 @@ def test_get_stuff_valid(mocker):
     # Stub dependencies
     mocker.patch(
         "backend.profiler.profiler.get_arsenal",
-        return_value=["SL", "FS", "FF"]
+        return_value={'SL': 0.103, 'FS': 0.380, 'FF': 0.516}
     )
     
     # Call and verify
@@ -265,7 +265,7 @@ def test_get_locations_valid(mocker):
     # Stub dependencies
     mocker.patch(
         "backend.profiler.profiler.get_arsenal",
-        return_value=["SL", "FS", "FF"]
+        return_value={'SL': 0.103, 'FS': 0.380, 'FF': 0.516}
     )
     
     # Call and verify
@@ -313,7 +313,7 @@ def test_find_tunnels_valid(mocker):
     # Stub dependencies
     mocker.patch(
         "backend.profiler.profiler.get_arsenal",
-        return_value=["SL", "FS", "FF"]
+        return_value={'SL': 0.103, 'FS': 0.380, 'FF': 0.516}
     )
     # TODO: stub calc_tunnel and tunnel_pair as well
     

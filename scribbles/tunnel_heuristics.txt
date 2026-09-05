@@ -29,7 +29,7 @@ ATTEMPT_01 [FAIL]
     - tunnel_xz(23.8ft) ~ (plate_x - pfx_x, plate_z - pfx_z)
     - tunnel_xz(23.8ft) !~ loc_xz(0ft) - mov_xz_rel_to_spinless_traj(0ft)
 
-ATTEMPT_02 [PASS/FAIL]
+ATTEMPT_02 [PASS]
     - ∆t?
         ∆t = ∆d / v_{av}
         ∆t = ∆d / v_{av}
