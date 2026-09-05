@@ -2,3 +2,5 @@
 __pycache__/
 *.csv
 .tmp/
+*.mp4
+.DS_Store

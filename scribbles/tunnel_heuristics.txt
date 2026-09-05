@@ -1,0 +1,60 @@
+PREAMBLE
+- *** all distance is measured relative to plate ****
+- Metrics:
+    - release_pos_x,release_pos_y,release_pos_z (directional release positions)
+    - vx0,vy0,vz0 (initial directional velocities)
+    - ax, ay, az (directional accelerations)
+    - plate_x,plate_z (directional ball positions at plate)
+- Constants:
+    - plate_y = 0ft
+    - tunnel_y = 23.8ft (https://www.baseballprospectus.com/news/article/31030/prospectus-feature-introducing-pitch-tunnels/)
+        - decision-point based on average-velocity fastball; imposed as the general decision-point for all pitches as is the fastball-centric nature 
+        of tunneling (i.e., conventionally speaking, you must be ready for the fastball, and so, make a swing decision by its decision point)
+    - rubber_y = 60.5ft
+    - ball_diam = 0.242ft
+- Formulas:
+    - ∆d = df - d0 [ft]
+    - v = ∆d / ∆t [ft/s]
+    - a = ∆v / ∆t [ft/s^2]
+
+CRITERIA
+    - two pitches tunnel w/ eachother such that they are within a ball of eachother at the tunneling point, i.e.,
+        '''
+        for a given pair of pitches (a, b):
+            a & b are a tunnel pair if:
+                |a_tunnel_xz(23.8ft) - b_tunnel_xz(23.8ft)| <= 0.242ft
+        '''
+
+ATTEMPT_01 [FAIL]
+    - tunnel_xz(23.8ft) ~ (plate_x - pfx_x, plate_z - pfx_z)
+    - tunnel_xz(23.8ft) !~ loc_xz(0ft) - mov_xz_rel_to_spinless_traj(0ft)
+
+ATTEMPT_02 [PASS/FAIL]
+    - ∆t?
+        ∆t = ∆d / v_{av}
+        ∆t = ∆d / v_{av}
+        ∆t = ∆d / ([v0 + vf] / 2)
+        ∆t = ∆d / ([v0 + (v0 + a*∆t)] / 2)
+        ∆t = ∆d / ([2*v0 + a*∆t] / 2)
+        ∆t = ∆d / (v0 + a*∆t / 2)
+        ∆t(v0 + a*∆t / 2) = ∆d
+        ∆t*v0 + a*∆t^2 / 2 = ∆d
+        ∆d =  0.5*a*∆t^2 + ∆t*v0
+        ∆d= 0.5*a*∆t^2 + ∆t*v0
+        0 = 0.5*a*∆t^2 + ∆t*v0 - ∆d
+        0 = 0.5*ay*∆t^2 + ∆t*vy0 - ∆dy
+        0 = 0.5*ay*∆t^2 + ∆t*vy0 - (tunnel_y - release_pos_y)   # ∆dy = dyf - dy0 = tunnel_y - release_pos_y = 23.8ft - ~53.8ft ~ -30ft (ball travels in negative distance of y-axis, towards homeplate)
+        0 = 0.5*ay*∆t^2 + ∆t*vy0 + (release_pos_y - tunnel_y)
+        ∆t ~ ∆t1, ∆t2
+        ∆t = _
+    - v_{av}?
+        v_{av} = (v0 + vf) / 2
+        v_{av} = (v0 + [v0 + a*∆t]) / 2
+        v_{av} = (2*v0 + a*∆t) / 2
+        v_{av} = v0 + a*∆t / 2
+        v_{av} = v0 + 0.5*a*∆t
+    - tunnel?
+        tunnel = release_pos + (v0 + 0.5*a*∆t)*∆t
+        tunnel = release_pos + v0*∆t + 0.5*a*∆t^2
+        tunnel_xz = (release_pos_x + vx0*∆t + 0.5*ax*∆t^2, release_pos_z + vz0*∆t + 0.5*az*∆t^2)
+
