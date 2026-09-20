@@ -21,7 +21,7 @@ WITH pitches_table AS (
         plate_z,
         zone,
         COUNT(*) AS pitches
-    FROM 'backend/parser/raw_data.csv'
+    FROM 'backend/data/raw_data.csv'
     -- Selects all desired data points
     GROUP BY game_pk, player_name, p_throws, arm_angle, pitch_type, release_speed, ax, ay, az, vx0, vy0, vz0, release_pos_x, release_pos_y, release_pos_z, pfx_x, pfx_z, plate_x, plate_z, zone
 ),
@@ -31,7 +31,7 @@ total_pitches_table AS (
         player_name,
         COUNT(*) AS total_pitches,
         SUM(arm_angle) / COUNT(*) AS avg_arm_angle
-    FROM 'backend/parser/raw_data.csv'
+    FROM 'backend/data/raw_data.csv'
     -- Selects a player
     GROUP BY player_name
 ),
@@ -44,7 +44,7 @@ pitch_type_pitches_table AS (
         SUM(pfx_x) / COUNT(*) AS avg_pfx_x,
         SUM(pfx_z) / COUNT(*) AS avg_pfx_z,
         COUNT(*) AS total_pitch_type_pitches
-    FROM 'backend/parser/raw_data.csv'
+    FROM 'backend/data/raw_data.csv'
     -- Selects a player and pitch
     GROUP BY player_name, pitch_type
 ),
@@ -55,7 +55,7 @@ pitch_type_pitches_in_zone_table AS (
         pitch_type,
         zone,
         COUNT(*) AS total_pitch_type_pitches_in_zone,
-    FROM 'backend/parser/raw_data.csv'
+    FROM 'backend/data/raw_data.csv'
     -- Selects a player, pitch, and zone
     GROUP BY player_name, pitch_type, zone
 )

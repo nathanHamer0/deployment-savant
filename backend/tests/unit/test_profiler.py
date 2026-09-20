@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import Mock
-from backend.profiler import profiler
+from backend import profiler
 import pandas
 
 row1 = {

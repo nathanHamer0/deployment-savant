@@ -22,7 +22,7 @@ def load_pitch_data(player_name=""):
     Returns:
         DataFrame: specified pitch data.
     """
-    pitches = pandas.read_csv('backend/parser/parsed_data.csv')
+    pitches = pandas.read_csv('backend/data/parsed_data.csv')
     if player_name:
         pitches = pitches[pitches['player_name'] == player_name]
     return pitches
