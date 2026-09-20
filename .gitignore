@@ -7,3 +7,6 @@ __pycache__/
 scribbles/
 x_*
 frontend/
+scribbles/
+*.pkl
+*.xlsx
