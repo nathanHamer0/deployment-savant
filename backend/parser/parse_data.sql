@@ -1,6 +1,6 @@
 WITH pitches_table AS (
     SELECT
-        game_date,
+        game_pk,
         player_name,
         p_throws,
         arm_angle,
@@ -23,7 +23,7 @@ WITH pitches_table AS (
         COUNT(*) AS pitches
     FROM 'backend/parser/raw_data.csv'
     -- Selects all desired data points
-    GROUP BY game_date, player_name, p_throws, arm_angle, pitch_type, release_speed, ax, ay, az, vx0, vy0, vz0, release_pos_x, release_pos_y, release_pos_z, pfx_x, pfx_z, plate_x, plate_z, zone
+    GROUP BY game_pk, player_name, p_throws, arm_angle, pitch_type, release_speed, ax, ay, az, vx0, vy0, vz0, release_pos_x, release_pos_y, release_pos_z, pfx_x, pfx_z, plate_x, plate_z, zone
 ),
 
 total_pitches_table AS (

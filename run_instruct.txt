@@ -1,1 +1,3 @@
 python -m pytest
+python -m scribbles.export_tunnel_data
+python -m backend.processer.processer

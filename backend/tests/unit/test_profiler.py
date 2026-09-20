@@ -4,6 +4,7 @@ from backend.profiler import profiler
 import pandas
 
 row1 = {
+    "game_pk": 100000,
     "player_name": "Gausman, Kevin",
     "p_throws": "R",
     "arm_angle": 35.3,
@@ -36,6 +37,7 @@ row1 = {
     "ovr_pitch_freq": 0.0056022408963585435
 }
 row2 = {
+    "game_pk": 100000,
     "player_name": "Gausman, Kevin",
     "p_throws": "R",
     "arm_angle": 37.3,
@@ -68,6 +70,7 @@ row2 = {
     "ovr_pitch_freq": 0.028011204481792718
 }
 row3 = {
+    "game_pk": 100000,
     "player_name": "Gausman, Kevin",
     "p_throws": "R",
     "arm_angle": 37.5,
@@ -100,6 +103,7 @@ row3 = {
     "ovr_pitch_freq": 0.1568627450980392
 }
 row4 = {
+    "game_pk": 100000,
     "player_name": "Gausman, Kevin",
     "p_throws": "R",
     "arm_angle": 39.0,
@@ -132,6 +136,7 @@ row4 = {
     "ovr_pitch_freq": 0.04481792717086835
 }
 row5 = {
+    "game_pk": 100000,
     "player_name": "Gausman, Kevin",
     "p_throws": "R",
     "arm_angle": 37.1,
@@ -164,6 +169,7 @@ row5 = {
     "ovr_pitch_freq": 0.049019607843137254
 }
 row6 = {
+    "game_pk": 100000,
     "player_name": "Gausman, Kevin",
     "p_throws": "R",
     "arm_angle": 31.1,
@@ -195,18 +201,51 @@ row6 = {
     "pitch_type_zone_freq": 0.4132841328413284,
     "ovr_pitch_freq": 0.1568627450980392
 }
+row7 = {
+    "game_pk": 200000,
+    "player_name": "Gausman, Kevin",
+    "p_throws": "R",
+    "arm_angle": 37.1,
+    "pitch_type": "FF",
+    "release_speed": 94.8,
+    "ax": -19.478251557329827,
+    "ay": 29.519278856819973,
+    "az": -14.320158576469122,
+    "vx0": 9.894849359436636,
+    "vy0": -137.64246927404466,
+    "vz0": -4.93412023678617,
+    "release_pos_x": -2.46,
+    "release_pos_y": 53.96,
+    "release_pos_z": 5.69,
+    "pfx_x": -1.36,
+    "pfx_z": 1.33,
+    "plate_x": 0.1648262942095362,
+    "plate_z": 2.7200674336021033,
+    "zone": 5,
+    "pitches": 1,
+    "total_pitches": 2142,
+    "avg_arm_angle": 37.23622782446313,
+    "avg_release_speed": 93.94493670886075,
+    "avg_pfx_x": -0.9111301989150089,
+    "avg_pfx_z": 1.4094032549728752,
+    "total_pitch_type_pitches": 1106,
+    "total_pitch_type_pitches_in_zone": 105,
+    "pitch_type_freq": 0.5163398692810458,
+    "pitch_type_zone_freq": 0.0949367088607595,
+    "ovr_pitch_freq": 0.049019607843137254
+}   # row5 w/ diff gameID
 global INPUT_DF
-INPUT_DF = pandas.DataFrame([row1, row2, row3, row4, row5, row6])
+INPUT_DF = pandas.DataFrame([row1, row2, row3, row4, row5, row6, row7])
 
 def test_load_pitch_data():
     """Test data loader with no input.
     
-    Where Shota Imanaga has the first row of pitch data in the parsed dataset.
+    Where 824815 is the gameID of the first row of pitch data in the parsed dataset.
     """
     
     # Call and verify
     res = profiler.load_pitch_data()
-    assert res['player_name'].iloc[0] == "Imanaga, Shota"
+    assert res['game_pk'].iloc[0] == 824815
     
 def test_load_pitch_data_valid():
     """Test data loader with valid input."""
@@ -214,6 +253,14 @@ def test_load_pitch_data_valid():
     # Call and verify
     res = profiler.load_pitch_data("Gausman, Kevin")
     assert res['player_name'].iloc[0] == "Gausman, Kevin"
+    
+def test_get_durability_valid():
+    
+    """Test durability extractor with valid input."""
+    
+    # Call and verify
+    res = profiler.get_durability(INPUT_DF)
+    assert res == 2142
     
 def test_get_handedness_valid():
     """Test handedness extractor with valid input."""
@@ -291,7 +338,7 @@ def test_calc_tunnel_valid():
         pytest.approx((-1.279, 4.005), abs=0.001)
     ]
 
-def test_tunnel_pair_valid_pos():
+def test_pair_tunnels_valid_pos():
     """Test tunnel pairer with valid positive input.
     
     LOOK: Tunnel pairs verified by ClaudeSonnet5, ChatGPT, and by my observation of overlay videos.
@@ -299,14 +346,25 @@ def test_tunnel_pair_valid_pos():
       
     # Call and verify
     # LOOK: calc_tunnel is used as a helper function within the context of this module, so it need not be stubbed/mocked
-    assert profiler.tunnel_pair(profiler.calc_tunnel(INPUT_DF.iloc[1]), profiler.calc_tunnel(INPUT_DF.iloc[4])) == True   # tunnel_25
+    assert profiler.pair_tunnels(profiler.calc_tunnel(INPUT_DF.iloc[1]), profiler.calc_tunnel(INPUT_DF.iloc[4])) == True   # tunnel_25
     
-def test_tunnel_pair_valid_neg():
+def test_pair_tunnels_valid_neg():
     """Test tunnel pairer with valid negative input."""
       
     # Call and verify
-    assert profiler.tunnel_pair(profiler.calc_tunnel(INPUT_DF.iloc[0]), profiler.calc_tunnel(INPUT_DF.iloc[5])) == False   # tunnel_16
-     
+    assert profiler.pair_tunnels(profiler.calc_tunnel(INPUT_DF.iloc[0]), profiler.calc_tunnel(INPUT_DF.iloc[5])) == False   # tunnel_16
+
+def test_symmetrize_tunnel_pair():
+    """Test symmetrizer with valid input."""
+
+    # Build input
+    input = {'FF': {'FF': 0.0, 'FS': 0.5}, 'FS': {'FF': 0.0, 'FS': 0.0}}
+
+    # Call and verify
+    profiler.symmetrize_tunnel_pair(input, "FF", "FS")
+    res = input
+    assert res == {'FF': {'FF': 0.0, 'FS': 0.5}, 'FS': {'FF': 0.5, 'FS': 0.0}}   
+    
 def test_find_tunnels_valid(mocker):
     """Test tunnel profiler with valid input."""
     
@@ -315,27 +373,41 @@ def test_find_tunnels_valid(mocker):
         "backend.profiler.profiler.get_arsenal",
         return_value={'SL': 0.103, 'FS': 0.380, 'FF': 0.516}
     )
-    # TODO: stub calc_tunnel and tunnel_pair as well
+    # TODO: stub calc_tunnel and pair_tunnels as well
     
     # Call and verify
     res = profiler.find_tunnels(INPUT_DF)
     assert res == {
-        "SL": {
-            "SL": 0 / 2142,
-            "FS": 1 / 2142,  # tunnel_12
-            "FF": 0 / 2142
-        },
-        "FS": {
-            "SL": 1 / 2142,
-            "FS": 0 / 2142,
-            "FF": 2 / 2142  # tunnel_25, tunnel_34
-        },
-        "FF": {
-            "SL": 0 / 2142,
-            "FS": 2 / 2142,
-            "FF": 0 / 2142
-        }
+    "FF": {
+        "FF": 0.0,
+        "FS": 2 / 2142,     # tunnel_34, tunnel_25, not tunnel_27 due to differing gameID
+        "SL": 0.0
+    },
+    "FS": {
+        "FF": 2 / 2142,
+        "FS": 0.0,
+        "SL": 1 / 2142     # tunnel_12
+    },
+    "SL": {
+        "FF": 0.0,
+        "FS": 1 / 2142,
+        "SL": 0.0
     }
+}
+    
+def test_aggregate_tunnels():
+    """Test tunnel aggregator with valid input."""
+
+    # Build input
+    input = {
+        'FF': {'FF': 0.0, 'FS': 0.5, 'SL': 0.25}, 
+        'FS': {'FF': 0.5, 'FS': 0.0, 'SL': 0.0}, 
+        'SL': {'FF': 0.25, 'FS': 0.0, 'SL': 0.0}
+    }
+
+    # Call and verify
+    res = profiler.aggregate_tunnels(input)
+    assert res == {'A': 0.75, 'F-F': 0.0, 'F-B': 0.25, 'F-O': 0.5, 'B-O': 0.0}
     
 def test_profile_player_valid():
     """"""
@@ -343,7 +415,7 @@ def test_profile_player_valid():
     pass
 
 def test_get_all_player_names(mocker):
-    """Test player name extractor."""
+    """Test pitcher name extractor."""
     
     # Stub dependencies
     mocker.patch(
